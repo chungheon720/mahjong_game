@@ -15,7 +15,13 @@ function partition(dataArr, low, high, compareFunc) {
     const pivot = dataArr[high];
     let index = low - 1;
     for (let i = low; i < high; i++) {
-        const s = compareFunc(dataArr[i], pivot);
+        let s;
+        if(!compareFunc){
+            s = compareFunc(dataArr[i], pivot);
+        }else{
+            s = defaultCompareFunc(dataArr[i], pivot);
+        }
+
         if (s) {
             index++;
             swapPosition(dataArr, index, i);
@@ -25,4 +31,15 @@ function partition(dataArr, low, high, compareFunc) {
     index++;
     swapPosition(dataArr, index, high);
     return index;
+}
+
+function defaultCompareFunc(data, pivotData){
+    if(data < pivotData){
+        return true;
+    }
+    else if (data >= pivotData){
+        return false;
+    }
+
+    return false;
 }
