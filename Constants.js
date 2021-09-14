@@ -4,7 +4,7 @@ const DISCARD_SIZE = 100;
 const IMAGE_TILE_WIDTH = 46;
 const IMAGE_TILE_HEIGHT = 61;
 const ASSETS_DIR = location.pathname + "assets/";
-const IMAGE_NAMES = [
+const ANIMAL_IMAGE_NAMES = [
     'cat.png',
     'mouse.png',
     'chicken.png',
@@ -38,7 +38,7 @@ export {
     TILE_HEIGHT,
     DISCARD_SIZE,
     ASSETS_DIR,
-    IMAGE_NAMES,
+    ANIMAL_IMAGE_NAMES,
     TILE_POSITION,
     IMAGE_TILE_WIDTH,
     IMAGE_TILE_HEIGHT,

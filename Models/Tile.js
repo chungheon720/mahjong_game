@@ -3,15 +3,14 @@ import {
     IMAGE_TILE_WIDTH, IMAGE_TILE_HEIGHT,
     IMAGE_POSITION_X, IMAGE_POSITION_Y,
     TILE_HEIGHT, TILE_WIDTH,
-} from "../constants.js";
+} from "../Constants.js";
 
 export class Tile{
-    constructor(imagePath = ASSETS_DIR + ANIMAL_IMAGE_NAMES[0], 
-        id = -1, x = 0, y = 0, spriteWidth = TILE_WIDTH, 
+    constructor(imagePath = ASSETS_DIR + ANIMAL_IMAGE_NAMES[0],
+        x = 0, y = 0, spriteWidth = TILE_WIDTH, 
         spriteHeight = TILE_HEIGHT, value = -1){
         this.x = x;
         this.y = y;
-        this.id = id;
         this.pressedDown = false;
         this.spriteWidth = spriteWidth;
         this.spriteHeight = spriteHeight;
@@ -24,7 +23,7 @@ export class Tile{
     update(mouse) {
         if (mouse.click) {
             this.pressedDown = this.checkClickBody(mouse);
-            if (this.pressedDown && mouse.selectedTile == this.id) {
+            if (this.pressedDown && mouse.selectedTile == this.value) {
                 this.x = mouse.x - this.spriteWidth / 2;
                 this.y = mouse.y - this.spriteHeight / 2;
             }
@@ -35,8 +34,8 @@ export class Tile{
     checkClickBody(mouse) {
         if ((mouse.x > this.x && mouse.x < this.x + this.spriteWidth &&
             mouse.y > this.y && mouse.y < this.y + this.spriteHeight &&
-            mouse.selectedTile == -1) || mouse.selectedTile == this.id) {
-            mouse.selectedTile = this.id
+            mouse.selectedTile == -1) || mouse.selectedTile == this.value) {
+            mouse.selectedTile = this.value
             return true;
         }
         else {
