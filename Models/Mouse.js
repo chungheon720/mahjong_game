@@ -5,31 +5,36 @@ export class Mouse{
             this.click = false,
             this.sTileID = -1,
             this.canvasPosition = canvas.getBoundingClientRect();
+            this.canvas = canvas;
+            this.setupListeners(canvas);
     }
 
-    setupListeners(canvas){
-        canvas.addEventListener('mousedown', function (event) {
-            this.x = event.x - canvasPosition.left;
-            this.y = event.y - canvasPosition.top;
-            this.click = true;
+    setupListeners(){
+        let self = this;
+        this.canvas.addEventListener('mousedown', function (event) {
+            self.x = event.x - self.canvasPosition.left;
+            self.y = event.y - self.canvasPosition.top;
+            self.click = true;
         });
-        canvas.addEventListener('mouseup', function (event) {
-            this.click = false;
-            this.selectedTile = -1;
+        this.canvas.addEventListener('mouseup', function (event) {
+            self.click = false;
+            self.sTileID = -1;
         });
-        canvas.addEventListener('mousemove', function (event) {
-            if (this.click) {
-                this.x = event.x - canvasPosition.left;
-                this.y = event.y - canvasPosition.top;
+        this.canvas.addEventListener('mousemove', function (event) {
+            if (self.click) {
+                self.x = event.x - self.canvasPosition.left;
+                self.y = event.y - self.canvasPosition.top;
             }
         });
-        canvas.addEventListener('mouseleave', function (event) {
-            this.click = false;
-            this.selectedTile = -1;
+        this.canvas.addEventListener('mouseleave', function (event) {
+            self.click = false;
+            self.sTileID = -1;
         });
-        canvas.addEventListener('mouseenter', function (event) {
-            this.click = false;
-            this.selectedTile = -1;
+        this.canvas.addEventListener('mouseenter', function (event) {
+            self.click = false;
+            self.sTileID = -1;
         });
+
     }
+    
 }
