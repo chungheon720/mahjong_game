@@ -16,7 +16,7 @@ function partition(dataArr, low, high, compareFunc) {
     let index = low - 1;
     for (let i = low; i < high; i++) {
         let s;
-        if(!compareFunc){
+        if(compareFunc){
             s = compareFunc(dataArr[i], pivot);
         }else{
             s = defaultCompareFunc(dataArr[i], pivot);
