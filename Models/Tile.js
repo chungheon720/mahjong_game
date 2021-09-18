@@ -57,18 +57,18 @@ export class Tile {
         //Draw tile object
         const color = Math.floor(this.value / 100);
         if (color == 4) {
-            this.drawBigTiles(ctx);
+            this.drawBigTiles(ctx, posX, posY);
         } else if (color == 5) {
-            this.drawSpecialTiles(ctx);
+            this.drawSpecialTiles(ctx, posX, posY);
         } else if (color < 4) {
-            this.drawNormalTiles(ctx, color - 1);
+            this.drawNormalTiles(ctx, color - 1, posX, posY);
         }
 
         //For debugging, draw value of tile
         ctx.font = '13px serif';
         ctx.fillStyle = 'black';
         if (color == 4) {
-            ctx.fillText(color + " " + Math.floor(this.value % 100 / 4), posX, posY);
+            ctx.fillText(color + " " + Math.floor(this.value % 100 / 4 % 7), posX, posY);
         } else if (color == 5) {
             ctx.fillText(color + " " + this.value % 100, posX, posY);
         } else {
@@ -77,25 +77,25 @@ export class Tile {
     }
 
     //Draw different type of tiles
-    drawNormalTiles(ctx, color) {
+    drawNormalTiles(ctx, color, posX, posY) {
         const val = this.value % 100 % 9;
         ctx.drawImage(this.image, IMAGE_POSITION_X[val], IMAGE_POSITION_Y[color],
-            IMAGE_TILE_WIDTH, IMAGE_TILE_HEIGHT, this.x, this.y, this.spriteWidth, this.spriteHeight);
+            IMAGE_TILE_WIDTH, IMAGE_TILE_HEIGHT, posX, posY, this.spriteWidth, this.spriteHeight);
     }
 
-    drawBigTiles(ctx,) {
-        const val = Math.floor(this.value % 100 / 4);
+    drawBigTiles(ctx, posX, posY) {
+        const val = Math.floor(this.value % 100 / 4 % 7);
         ctx.drawImage(this.image, IMAGE_POSITION_X[val], IMAGE_POSITION_Y[3],
-            IMAGE_TILE_WIDTH, IMAGE_TILE_HEIGHT, this.x, this.y, this.spriteWidth, this.spriteHeight);
+            IMAGE_TILE_WIDTH, IMAGE_TILE_HEIGHT,  posX, posY, this.spriteWidth, this.spriteHeight);
     }
 
-    drawSpecialTiles(ctx,) {
+    drawSpecialTiles(ctx, posX, posY) {
         const val = Math.floor(this.value % 100);
         if (val >= 8) {
-            ctx.drawImage(this.image, this.x, this.y, this.spriteWidth, this.spriteHeight);
+            ctx.drawImage(this.image,  posX, posY, this.spriteWidth, this.spriteHeight);
         } else {
             ctx.drawImage(this.image, IMAGE_POSITION_X[val], IMAGE_POSITION_Y[4],
-                IMAGE_TILE_WIDTH, IMAGE_TILE_HEIGHT, this.x, this.y, this.spriteWidth, this.spriteHeight);
+                IMAGE_TILE_WIDTH, IMAGE_TILE_HEIGHT, posX, posY, this.spriteWidth, this.spriteHeight);
         }
 
     }
