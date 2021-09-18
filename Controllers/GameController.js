@@ -6,10 +6,79 @@ import { Tile } from "../Models/Tile.js";
 export class GameController {
     constructor() {
         this.deck = new Array();
-        this.setup();
+        this.dPile = new Array();
+        this.drawn = false;
+    }
+    
+    //Discard tile to discard pile
+    discardTile(discardedTile){
+        this.dPile.unshift(discardedTile);
     }
 
+    //Check for possible combos
+    checkCombo(player){
+        if(!this.drawn){
+            player.getChoices(this.dPile[0]);
+        }
+    }
+
+    //Setup for the game
     setup() {
+        this.createDeck();
+        this.shuffleDeck();
+    }
+
+    testSetup(){
+        this.createTestDeck();
+        this.shuffleDeck();
+    }
+
+    //Shuffle the mahjong tiles
+    shuffleDeck(){
+        //iterate to every index to do a random swap
+        for (let i = 0; i < this.deck.length; i++) {
+            let r = Math.floor(Math.random() * 1000) % this.deck.length;
+            swapPosition(this.deck, i, r);
+        }
+    }
+     //Create 136 mahjong tiles to begin
+     createTestDeck(){
+        const imagePath = ASSETS_DIR + IMAGE_NAME;
+        for (let i = 1; i <= 3; i++) {
+            let base = 100;
+            let num = (i - 1) * 36
+            for (let j = num; j < num + 36; j++) {
+            const tile = new Tile(imagePath,
+                    0, 0, TILE_WIDTH,
+                    TILE_HEIGHT, base + j);
+                this.deck.push(tile);
+            }
+        }
+        for (let i = 1; i <= 3; i++) {
+            let base = 400;
+            let num = (i - 1) * 28
+            for (let j = num; j < num + 4; j++) {
+            const tile = new Tile(imagePath,
+                    0, 0, TILE_WIDTH,
+                    TILE_HEIGHT, base + j);
+                let value = base + j;
+                this.deck.push(tile);
+            }
+        }
+        
+        for (let i = 0; i < this.deck.length; i++) {
+            const tCol = Math.floor(this.deck[i].value / 100);
+            if (tCol == 4) {
+                console.log(tCol + " " + Math.floor(this.deck[i].value % 100 / 4 % 7));
+            } else {
+                console.log(tCol);
+            }
+        }
+        console.log("Total number of tiles: " + this.deck.length);
+    }
+    
+    //Create 148 mahjong tiles to begin
+    createDeck(){
         const imagePath = ASSETS_DIR + IMAGE_NAME;
         for (let i = 1; i <= 3; i++) {
             let base = 100 * i;
@@ -41,15 +110,12 @@ export class GameController {
         for (let i = 0; i < this.deck.length; i++) {
             const tCol = Math.floor(this.deck[i].value / 100);
             if (tCol == 4) {
-                console.log(tCol + " " + Math.floor(this.deck[i].value % 100 / 4));
+                console.log(tCol + " " + Math.floor(this.deck[i].value % 100 / 4 % 7));
             } else {
                 console.log(tCol);
             }
         }
-        for (let i = 0; i < this.deck.length; i++) {
-            let r = Math.floor(Math.random() * 1000) % this.deck.length;
-            swapPosition(this.deck, i, r);
-        }
+        console.log("Total number of tiles: " + this.deck.length);
     }
 
 }

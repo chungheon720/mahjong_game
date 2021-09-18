@@ -1,61 +1,50 @@
 import { GameController } from '../Controllers/GameController.js';
 import { Hand } from '../Models/Hand.js'
-import { TILE_POSITION, TILE_HEIGHT, TILE_WIDTH, CANVAS_WIDTH, CANVAS_HEIGHT } from '../Constants.js';
+import { TILE_POSITION, TILE_HEIGHT, TILE_WIDTH, CANVAS_WIDTH, CANVAS_HEIGHT, DISCARD_SIZE } from '../Constants.js';
 import { Mouse } from '../Models/Mouse.js';
+import { ViewController } from '../Controllers/ViewController.js';
+import { InteractionController } from '../Controllers/InteractionController.js';
+import { Player } from '../Models/Player.js';
 
 //Canvas setup
 const canvas = document.getElementById("canvas1");
 const ctx = canvas.getContext('2d');
-const wWidth = window.innerWidth;
-const wHeight = window.innerHeight;
-
-
 canvas.width = CANVAS_WIDTH;
 canvas.height = CANVAS_HEIGHT;
 
-ctx.font = '50px Georgia';
-// let debugOut = document.getElementById("debug_output");
+window.onresize = reportWindowResize;
 
-//Window resizing
-let canvasPosition = canvas.getBoundingClientRect();
-
-function reportWindowResize() {
-    canvasPosition = canvas.getBoundingClientRect();
-    mouse.canvasPosition = canvasPosition;
+function reportWindowResize(){
+    mouse.canvasPosition = canvas.getBoundingClientRect();
 }
 
-window.onresize = reportWindowResize;
-var hand;
-var gameController;
-var mouse = new Mouse(canvas);
+var player;
+var gameController, viewController, interactionController;
+const mouse = new Mouse(canvas);
 function main() {
     gameController = new GameController();
-    hand = new Hand();
-    hand.addTile(gameController.deck.pop());
-    hand.addTile(gameController.deck.pop());
+    gameController.testSetup();
+    player = new Player();
+    viewController = new ViewController(gameController, mouse, canvas, ctx);
+    interactionController = new InteractionController(gameController, mouse, player, canvas);
+    for(let i = 0; i < 13; i++){
+        player.addTile(gameController.deck.pop());
+    }
+    player.sortHand();
     animate();
 }
 
 function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    animateHand();
+    viewController.displayPlayer(player)
+    viewController.displayTable();
+    interactionController.interaction();
+    if(gameController.dPile.length >= 1){
+        gameController.checkCombo(player);
+    }
     requestAnimationFrame(animate);
 }
 
-function animateHand() {
-    hand.tilePositioning.forEach(function (tileID, index) {
-        if (tileID != -1) {
-            //Draws the tiles in the hand at the base
-            hand.tiles[tileID].draw(ctx, TILE_POSITION[index], canvas.height - TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT);
-            hand.tiles[tileID].update(mouse);
-        }
-    });
 
-     //Check if mouse has clicked on a tile
-     if (mouse.sTileID != -1) {
-        //Draw the tile on the mouse position
-        hand.tiles[mouse.sTileID].draw(ctx, mouse.x - TILE_WIDTH/2, mouse.y - TILE_HEIGHT / 2);
-     }
-}
 
 main();
