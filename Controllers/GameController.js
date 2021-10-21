@@ -9,6 +9,14 @@ export class GameController {
         this.dPile = new Array();
         this.drawn = false;
     }
+
+    drawTile(count = 1){
+        return this.deck.splice(0, count);
+    }
+
+    drawSpecialTile(count){
+        return this.deck.splice(0 - count, count)
+    }
     
     //Discard tile to discard pile
     discardTile(discardedTile){
@@ -20,6 +28,13 @@ export class GameController {
         if(!this.drawn){
             player.getChoices(this.dPile[0]);
         }
+    }
+
+    //Player eat tile
+    playerEatTile(player, comboTiles){
+        player.eatTile(this.dPile[0], comboTiles);
+        this.dPile.splice(0, 1);
+        this.drawn = true;
     }
 
     //Setup for the game
@@ -48,10 +63,12 @@ export class GameController {
             let base = 100;
             let num = (i - 1) * 36
             for (let j = num; j < num + 36; j++) {
-            const tile = new Tile(imagePath,
-                    0, 0, TILE_WIDTH,
-                    TILE_HEIGHT, base + j);
-                this.deck.push(tile);
+                if((base + j) % 100 % 9 > 5){
+                    const tile = new Tile(imagePath,
+                        0, 0, TILE_WIDTH,
+                        TILE_HEIGHT, base + j);
+                    this.deck.push(tile);
+                }
             }
         }
         for (let i = 1; i <= 3; i++) {
@@ -64,6 +81,18 @@ export class GameController {
                 let value = base + j;
                 this.deck.push(tile);
             }
+        }
+
+        for (let i = 0; i < 12; i++) {
+            let tileValue = 500 + i;
+            let spPath = imagePath;
+            if (tileValue % 100 > 7) {
+                spPath = ASSETS_DIR + ANIMAL_IMAGE_NAMES[tileValue % 100 % 8];
+            }
+            const tile = new Tile(spPath,
+                0, 0, TILE_WIDTH,
+                TILE_HEIGHT, tileValue);
+            this.deck.push(tile);
         }
         
         for (let i = 0; i < this.deck.length; i++) {
@@ -96,17 +125,7 @@ export class GameController {
             this.deck.push(tile);
 
         }
-        for (let i = 0; i < 12; i++) {
-            let tileValue = 500 + i;
-            let spPath = imagePath;
-            if (tileValue % 100 > 7) {
-                spPath = ASSETS_DIR + ANIMAL_IMAGE_NAMES[tileValue % 100 % 8];
-            }
-            const tile = new Tile(spPath,
-                0, 0, TILE_WIDTH,
-                TILE_HEIGHT, tileValue);
-            this.deck.push(tile);
-        }
+
         for (let i = 0; i < this.deck.length; i++) {
             const tCol = Math.floor(this.deck[i].value / 100);
             if (tCol == 4) {

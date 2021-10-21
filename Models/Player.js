@@ -1,3 +1,5 @@
+import { TILE_POSITION, TILE_WIDTH } from "../Constants.js";
+import { quickSort, swapPosition } from "../Helpers/SortingHelper.js";
 import { Hand } from "./Hand.js";
 
 export class Player {
@@ -6,21 +8,54 @@ export class Player {
         this.eatenArr = new Array();
         this.specialArr = new Array();
         this.choices = new Array();
+        this.flowerCount = 0;
+    }
+
+    //Eat tile
+    eatTile(discardedTile, comboTiles) {
+        const comboArr = [discardedTile];
+        for (let tileVal of comboTiles) {
+            comboArr.push(this.discardTile(tileVal));
+        }
+        quickSort(comboArr, 0, comboArr.length - 1, this.sortTileFunc)
+        this.eatenArr.push(comboArr);
+        this.choices.splice(0, this.choices.length);
+    }
+
+    //sort tile func for eating tiles
+    sortTileFunc(compareTile, tile) {
+        const pVal = tile.value % 100 % 9;
+        const tVal = compareTile.value % 100 % 9;
+        if (tVal < pVal) {
+            return true;
+        }else{
+            return false;
+        }
     }
 
     //Add tile to hand
-    addTile(tile) {
-        this.hand.addTile(tile);
+    addTile(tileArr) {
+        this.flowerCount = 0;
+        for (const tile of tileArr) {
+            if (Math.floor(tile.value / 100) == 5) {
+                this.flowerCount++;
+                this.specialArr.push(tile);
+            } else {
+                this.hand.addTile(tile);
+            }
+
+        }
     }
 
     //Discard tile from hand
-    discardTile(tileIndex) {
-       return this.hand.discardTile(tileIndex);
+    discardTile(tileValue) {
+        const tileIndex = this.hand.tilePositioning.indexOf(tileValue);
+        return this.hand.discardTile(tileIndex);
     }
 
     //Get specific tile for hand
-    getTile(tileIndex){
-        return this.hand.tiles[tileIndex];
+    getTile(tileVal) {
+        return this.hand.tiles[tileVal];
     }
 
     //Sort hand
@@ -28,15 +63,30 @@ export class Player {
         this.hand.sortHand();
     }
 
-    //Get position of tile with value
-    getPositionOfTile(tileValue){
-        return this.hand.tilePositioning.indexOf(tileValue);
+    shiftTile(mouse) {
+        const holdTile = this.hand.tilePositioning.indexOf(mouse.sTileID);
+        //Allow moving on tile position till halve the height of the screen
+        //Swap only till the end of the last available tile on right side
+        if (this.getTile(this.hand.tilePositioning[holdTile + 1])
+            && mouse.x > (TILE_POSITION[holdTile + 1] + TILE_WIDTH)) {
+            swapPosition(this.hand.tilePositioning, holdTile, holdTile + 1)
+        } else if (mouse.x < (TILE_POSITION[holdTile - 1] + TILE_WIDTH)) {
+            swapPosition(this.hand.tilePositioning, holdTile, holdTile - 1)
+        }
+        return 0;
     }
 
     //Get possible choices to eat
     getChoices(discardedTile) {
         const sortedPosition = this.hand.getSorted();
         this.choices = this.getCombo(sortedPosition, discardedTile);
+        // for(let choice of this.choices){
+        //     let choiceStr = "";
+        //     for(let c of choice){
+        //         let tVal = c % 100 % 9;
+        //         choiceStr += tVal + " ";
+        //     }
+        // }
     }
 
     //Get all sequences or same tiles
@@ -75,7 +125,7 @@ export class Player {
                             const start = (i - sameCount + 1);
                             const end = (i - sameCount + 1) + sameCount;
                             const choice = sortedPosition.slice(start, end);
-                            choices.push(choice);
+                            choices.unshift(choice);
                         }
                     } else if (diff >= -2 && diff <= 2) {
                         if (state == 0 ||
@@ -97,6 +147,7 @@ export class Player {
                     }
                 }
             }
+
         }
 
         return choices;

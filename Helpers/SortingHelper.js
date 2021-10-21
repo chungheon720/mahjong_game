@@ -40,6 +40,4 @@ function defaultCompareFunc(data, pivotData){
     else if (data >= pivotData){
         return false;
     }
-
-    return false;
 }

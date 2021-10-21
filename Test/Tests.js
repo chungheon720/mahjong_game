@@ -27,8 +27,9 @@ function main() {
     player = new Player();
     viewController = new ViewController(gameController, mouse, canvas, ctx);
     interactionController = new InteractionController(gameController, mouse, player, canvas);
-    for(let i = 0; i < 13; i++){
-        player.addTile(gameController.deck.pop());
+    player.addTile(gameController.drawTile(13));
+    while(player.flowerCount != 0){
+        player.addTile(gameController.drawSpecialTile(player.flowerCount));
     }
     player.sortHand();
     animate();
